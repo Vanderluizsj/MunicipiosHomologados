@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing; // Requerido para gerenciar as cores do Excel
 using System.IO;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using OfficeOpenXml; // Requer o pacote NuGet: EPPlus 8+
+using OfficeOpenXml; 
+using OfficeOpenXml.Style; // Requerido para aplicar as bordas e alinhamentos
 
 namespace ValidadorEscalavelNDD
 {
@@ -21,18 +23,18 @@ namespace ValidadorEscalavelNDD
             string caminhoResultado = Path.Combine(pastaTrabalho, "Cliente_Resultado_Final.xlsx");
             string urlNdd = "https://documentacao-nfse.e-datacenter.nddigital.com.br/fiscal-documentacao/docs/ndd-nfse/municipios-nfse/";
 
-            // VALIDAÇÃO DA LICENÇA INDIVIDUAL REQUERIDA NO EPPLUS 8+
+            // VALIDAÇÃO DA LICENÇA INDIVIDUAL DO EPPLUS 8+
             ExcelPackage.License.SetNonCommercialPersonal("<Vander>");
 
             try
             {
-                Console.WriteLine("🚀 Iniciando processamento escalável...");
+                Console.WriteLine("🚀 Iniciando processamento escalável e estilização visual...");
 
                 // 1. CARREGA O SITE DA NDD EXTRAINDO OS CÓDIGOS E DETECTANDO O PADRÃO NACIONAL
                 Console.WriteLine("🌐 Consultando site da NDD...");
                 var municipiosHomologadosNdd = await ObterMunicipiosHomologadosNddAsync(urlNdd);
 
-                // 2. CARREGA A BASE DO IBGE EM MEMÓRIA (O NOSSO "PROCV" EM C#)
+                // 2. CARREGA A BASE DO IBGE EM MEMÓRIA
                 Console.WriteLine("📂 Carregando base de dados do IBGE para o PROCV interno...");
                 var dicionarioIbge = CarregarDicionarioIbgeLocal(caminhoBaseIbge);
 
@@ -57,9 +59,10 @@ namespace ValidadorEscalavelNDD
                     // DEFINE OS CABEÇALHOS DAS COLUNAS C, D E E
                     ws.Cells[1, 3].Value = "Código IBGE";
                     ws.Cells[1, 4].Value = "Status NDD";
-                    ws.Cells[1, 5].Value = "NFSe Nacional"; // Nova Coluna E
+                    ws.Cells[1, 5].Value = "NFSe Nacional";
 
-                    int totalAtualizados = 0;
+                    // Habilita a visualização das linhas de grade padrão do Excel
+                    ws.View.ShowGridLines = true;
 
                     for (int linha = 2; linha <= totalLinhas; linha++)
                     {
@@ -68,13 +71,10 @@ namespace ValidadorEscalavelNDD
 
                         if (string.IsNullOrEmpty(municipio) || string.IsNullOrEmpty(uf)) continue;
 
-                        // Monta a chave em maiúsculo para buscar no dicionário: "MUNICÍPIO - UF"
                         string chaveProcv = $"{municipio} - {uf}".ToUpper();
 
-                        // EXECUTA O PROCV EM MEMÓRIA
                         if (dicionarioIbge.TryGetValue(chaveProcv, out string? codigoIbge) && !string.IsNullOrEmpty(codigoIbge))
                         {
-                            // Grava o código do IBGE formatado com 7 dígitos na Coluna C
                             if (long.TryParse(codigoIbge, out long codigoNum))
                             {
                                 ws.Cells[linha, 3].Value = codigoNum;
@@ -85,7 +85,6 @@ namespace ValidadorEscalavelNDD
                                 ws.Cells[linha, 3].Value = codigoIbge;
                             }
 
-                            // VALIDAÇÃO INTELIGENTE CONTRA O MAPA DA NDD
                             if (municipiosHomologadosNdd.TryGetValue(codigoIbge, out bool ehNacional))
                             {
                                 ws.Cells[linha, 4].Value = "Homologado";
@@ -96,7 +95,6 @@ namespace ValidadorEscalavelNDD
                                 ws.Cells[linha, 4].Value = "Não Homologado";
                                 ws.Cells[linha, 5].Value = "Não";
                             }
-                            totalAtualizados++;
                         }
                         else
                         {
@@ -106,10 +104,73 @@ namespace ValidadorEscalavelNDD
                         }
                     }
 
-                    // Salva os resultados no arquivo final
+                    // =========================================================================
+                    // BLOCO DE FORMATAÇÃO VISUAL CORRIGIDO PARA O EPPLUS 8
+                    // =========================================================================
+                    Console.WriteLine("🎨 Aplicando design e estilização nas células...");
+
+                    // 1. Estilização do Cabeçalho (Linha 1, Colunas A até E)
+                    using (var rangeHeader = ws.Cells[1, 1, 1, 5])
+                    {
+                        rangeHeader.Style.Font.Name = "Arial";
+                        rangeHeader.Style.Font.Size = 11;
+                        rangeHeader.Style.Font.Bold = true;
+                        rangeHeader.Style.Font.Color.SetColor(Color.White);
+                        
+                        // Cor Azul Escuro (Navy Blue)
+                        rangeHeader.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        rangeHeader.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(31, 78, 120)); 
+                        
+                        // CORREÇÃO: Propriedades diretas de alinhamento do EPPlus
+                        rangeHeader.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                        rangeHeader.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                    }
+
+                    // 2. Estilização das Linhas de Dados e Efeito Zebrado
+                    Color corZebradaSuave = Color.FromArgb(249, 251, 253); 
+                    Color corBordaCinza = Color.FromArgb(217, 217, 217);
+
+                    for (int r = 2; r <= totalLinhas; r++)
+                    {
+                        var linhaDados = ws.Cells[r, 1, r, 5];
+                        linhaDados.Style.Font.Name = "Arial";
+                        linhaDados.Style.Font.Size = 10;
+
+                        // CORREÇÃO: Alinhamentos específicos diretos por coluna
+                        ws.Cells[r, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;   // Município
+                        ws.Cells[r, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center; // UF
+                        ws.Cells[r, 3].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center; // Código IBGE
+                        ws.Cells[r, 4].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;   // Status
+                        ws.Cells[r, 5].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center; // NFSe Nacional
+
+                        // Efeito Zebrado (Linhas pares)
+                        if (r % 2 == 0)
+                        {
+                            linhaDados.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                            linhaDados.Style.Fill.BackgroundColor.SetColor(corZebradaSuave);
+                        }
+
+                        // Aplica bordas finas em todas as células de dados
+                        for (int col = 1; col <= 5; col++)
+                        {
+                            var cell = ws.Cells[r, col];
+                            cell.Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                            cell.Style.Border.Top.Color.SetColor(corBordaCinza);
+                            cell.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                            cell.Style.Border.Bottom.Color.SetColor(corBordaCinza);
+                            cell.Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                            cell.Style.Border.Left.Color.SetColor(corBordaCinza);
+                            cell.Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                            cell.Style.Border.Right.Color.SetColor(corBordaCinza);
+                        }
+                    }
+
+                    // 3. Ajuste Automático da Largura das Colunas
+                    ws.Cells[1, 1, totalLinhas, 5].AutoFitColumns();
+
+                    // Salva os resultados no arquivo final formatado
                     pacote.SaveAs(new FileInfo(caminhoResultado));
-                    Console.WriteLine($"\n✔ Concluído! {totalAtualizados} municípios validados.");
-                    Console.WriteLine($"📊 Resultado exportado para: {caminhoResultado}");
+                    Console.WriteLine($"\n✔ Concluído! Planilha formatada gerada em: {caminhoResultado}");
                 }
             }
             catch (Exception ex)
@@ -130,7 +191,6 @@ namespace ValidadorEscalavelNDD
 
             var mapaMunicipios = new Dictionary<string, bool>();
 
-            // Captura o código de 7 dígitos junto com os caracteres vizinhos para checar o contexto
             var regexLinhas = new Regex(@"([^\n\r]{1,60})\b([0-9]{7})\b([^\n\r]{1,60})", RegexOptions.IgnoreCase);
             var matches = regexLinhas.Matches(html);
 
@@ -139,7 +199,6 @@ namespace ValidadorEscalavelNDD
                 string textoAoRedor = match.Value;
                 string codigoIbge = match.Groups[2].Value;
 
-                // Checa se nas proximidades do código existe menção ao padrão nacional
                 bool ehNacional = textoAoRedor.Contains("Nacional", StringComparison.OrdinalIgnoreCase) || 
                                   textoAoRedor.Contains("NfseNacional", StringComparison.OrdinalIgnoreCase);
 
