@@ -8,10 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ClosedXML" Version="0.105.0" />
     <PackageReference Include="EPPlus" Version="8.6.1" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.45.0" />
-    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="149.0.7827.15500" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="C:\Source\MunicipiosHomologados\Base_Consulta_IBGE_Municipios_2024.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="C:\Source\MunicipiosHomologados\Cliente.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

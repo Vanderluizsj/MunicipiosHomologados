@@ -232,13 +232,8 @@ ResultadoValidacao.cs
  System.Xml.XPath.XDocument.dll
  WindowsBase.dll
 <NUGET>/
- closedxml.parser/2.0.0/lib/netstandard2.1/ClosedXML.Parser.dll
- closedxml/0.105.0/lib/netstandard2.1/ClosedXML.dll
- documentformat.openxml.framework/3.1.1/lib/net8.0/DocumentFormat.OpenXml.Framework.dll
- documentformat.openxml/3.1.1/lib/net8.0/DocumentFormat.OpenXml.dll
  epplus.interfaces/8.4.0/lib/net10.0/EPPlus.Interfaces.dll
  epplus/8.6.1/lib/net10.0/EPPlus.dll
- excelnumberformat/1.1.0/lib/netstandard2.0/ExcelNumberFormat.dll
  microsoft.extensions.configuration.abstractions/10.0.7/lib/net10.0/Microsoft.Extensions.Configuration.Abstractions.dll
  microsoft.extensions.configuration.fileextensions/10.0.7/lib/net10.0/Microsoft.Extensions.Configuration.FileExtensions.dll
  microsoft.extensions.configuration.json/10.0.7/lib/net10.0/Microsoft.Extensions.Configuration.Json.dll
@@ -248,10 +243,6 @@ ResultadoValidacao.cs
  microsoft.extensions.filesystemglobbing/10.0.7/lib/net10.0/Microsoft.Extensions.FileSystemGlobbing.dll
  microsoft.extensions.primitives/10.0.7/lib/net10.0/Microsoft.Extensions.Primitives.dll
  microsoft.io.recyclablememorystream/3.0.1/lib/net6.0/Microsoft.IO.RecyclableMemoryStream.dll
- rbush.signed/4.0.0/lib/net8.0/RBush.dll
- selenium.webdriver/4.45.0/lib/net8.0/Selenium.WebDriver.dll
- sixlabors.fonts/1.0.0/lib/netcoreapp3.1/SixLabors.Fonts.dll
- system.io.packaging/8.0.1/lib/net8.0/System.IO.Packaging.dll
  system.security.cryptography.pkcs/10.0.7/lib/net10.0/System.Security.Cryptography.Pkcs.dll
  system.security.cryptography.xml/10.0.7/lib/net10.0/System.Security.Cryptography.Xml.dll
 
@@ -266,6 +257,9 @@ ResultadoValidacao.cs
 <DOTNET>/sdk/10.0.108/Sdks/Microsoft.NET.Sdk/analyzers/
  Microsoft.CodeAnalysis.CSharp.NetAnalyzers.dll
  Microsoft.CodeAnalysis.NetAnalyzers.dll
+<NUGET>/microsoft.net.illink.tasks/10.0.8/analyzers/dotnet/cs/
+ ILLink.CodeFixProvider.dll
+ ILLink.RoslynAnalyzer.dll
 
 [analyzerConfigFiles]
 <DOTNET>/sdk/10.0.108/Sdks/Microsoft.NET.Sdk/analyzers/build/config/analysislevel_10_default.globalconfig

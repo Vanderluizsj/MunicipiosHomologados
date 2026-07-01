@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing; // Requerido para gerenciar as cores do Excel
-using System.IO;
-using System.Net.Http;
+﻿using System.Drawing; // Requerido para gerenciar as cores do Excel
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using OfficeOpenXml; 
+using OfficeOpenXml;
 using OfficeOpenXml.Style; // Requerido para aplicar as bordas e alinhamentos
 
 namespace ValidadorEscalavelNDD
@@ -16,13 +11,16 @@ namespace ValidadorEscalavelNDD
 
         static async Task Main(string[] args)
         {
-            // CAMINHOS ABSOLUTOS DIRETOS PARA A SUA PASTA DE ORIGEM
-            string pastaTrabalho = @"C:\Source\MunicipiosHomologados\";
-            string caminhoBaseIbge = Path.Combine(pastaTrabalho, "Base_Consulta_IBGE_Municipios_2024.xlsx");
-            string caminhoClientes = Path.Combine(pastaTrabalho, "Cliente.xlsx");
-            string caminhoResultado = Path.Combine(pastaTrabalho, "Cliente_Resultado_Final.xlsx");
-            string urlNdd = "https://documentacao-nfse.e-datacenter.nddigital.com.br/fiscal-documentacao/docs/ndd-nfse/municipios-nfse/";
+            // CAPTURA A PASTA ONDE O EXECUTÁVEL ESTÁ RODANDO ATUALMENTE
+            string pastaExecutavel = AppDomain.CurrentDomain.BaseDirectory;
 
+            // CAMINHOS DE ENTRADA (O .NET vai garantir que elas existam na mesma pasta do .exe)
+            string caminhoBaseIbge = Path.Combine(pastaExecutavel, "Base_Consulta_IBGE_Municipios_2024.xlsx");
+            string caminhoClientes = Path.Combine(pastaExecutavel, "Cliente.xlsx");
+
+            // CAMINHO DE SAÍDA (O resultado final sempre será gerado na pasta atual do .exe)
+            string caminhoResultado = Path.Combine(pastaExecutavel, "Cliente_Resultado_Final.xlsx");
+            string urlNdd = "https://documentacao-nfse.e-datacenter.nddigital.com.br/fiscal-documentacao/docs/ndd-nfse/municipios-nfse/";
             // VALIDAÇÃO DA LICENÇA INDIVIDUAL DO EPPLUS 8+
             ExcelPackage.License.SetNonCommercialPersonal("<Vander>");
 
@@ -40,7 +38,7 @@ namespace ValidadorEscalavelNDD
 
                 // 3. PROCESSA A PLANILHA DE CLIENTES
                 Console.WriteLine("📝 Processando dados dos clientes...");
-                
+
                 if (!File.Exists(caminhoClientes))
                 {
                     throw new FileNotFoundException($"O arquivo de clientes não foi encontrado: {caminhoClientes}");
@@ -116,18 +114,18 @@ namespace ValidadorEscalavelNDD
                         rangeHeader.Style.Font.Size = 11;
                         rangeHeader.Style.Font.Bold = true;
                         rangeHeader.Style.Font.Color.SetColor(Color.White);
-                        
+
                         // Cor Azul Escuro (Navy Blue)
                         rangeHeader.Style.Fill.PatternType = ExcelFillStyle.Solid;
-                        rangeHeader.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(31, 78, 120)); 
-                        
+                        rangeHeader.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(31, 78, 120));
+
                         // CORREÇÃO: Propriedades diretas de alinhamento do EPPlus
                         rangeHeader.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
                         rangeHeader.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
                     }
 
                     // 2. Estilização das Linhas de Dados e Efeito Zebrado
-                    Color corZebradaSuave = Color.FromArgb(249, 251, 253); 
+                    Color corZebradaSuave = Color.FromArgb(249, 251, 253);
                     Color corBordaCinza = Color.FromArgb(217, 217, 217);
 
                     for (int r = 2; r <= totalLinhas; r++)
@@ -183,7 +181,7 @@ namespace ValidadorEscalavelNDD
         {
             _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) C# Core");
-            
+
             string html = await _httpClient.GetStringAsync(url);
 
             if (!html.Contains("Municípios Homologados", StringComparison.OrdinalIgnoreCase))
@@ -199,7 +197,7 @@ namespace ValidadorEscalavelNDD
                 string textoAoRedor = match.Value;
                 string codigoIbge = match.Groups[2].Value;
 
-                bool ehNacional = textoAoRedor.Contains("Nacional", StringComparison.OrdinalIgnoreCase) || 
+                bool ehNacional = textoAoRedor.Contains("Nacional", StringComparison.OrdinalIgnoreCase) ||
                                   textoAoRedor.Contains("NfseNacional", StringComparison.OrdinalIgnoreCase);
 
                 if (!mapaMunicipios.ContainsKey(codigoIbge))
@@ -221,18 +219,18 @@ namespace ValidadorEscalavelNDD
 
             using (var pacote = new ExcelPackage(new FileInfo(caminho)))
             {
-                var ws = pacote.Workbook.Worksheets[0]; 
+                var ws = pacote.Workbook.Worksheets[0];
                 int totalLinhas = ws.Dimension?.End.Row ?? 0;
 
                 for (int linha = 2; linha <= totalLinhas; linha++)
                 {
-                    string chaveOriginal = ws.Cells[linha, 1].Value?.ToString()?.Trim() ?? ""; 
-                    string codigo = ws.Cells[linha, 2].Value?.ToString()?.Trim() ?? "";        
+                    string chaveOriginal = ws.Cells[linha, 1].Value?.ToString()?.Trim() ?? "";
+                    string codigo = ws.Cells[linha, 2].Value?.ToString()?.Trim() ?? "";
 
                     if (!string.IsNullOrEmpty(chaveOriginal) && !string.IsNullOrEmpty(codigo))
                     {
                         string chave = chaveOriginal.ToUpper();
-                        
+
                         if (!dicionario.ContainsKey(chave))
                         {
                             dicionario.Add(chave, codigo);
