@@ -9,5 +9,6 @@ namespace MunicipiosHomologados.ConsoleApp
     {
         public int LinhaExcel { get; set; }
         public string Status { get; set; } = "";
+        public string Nacional { get; set; } = string.Empty;
     }
 }
