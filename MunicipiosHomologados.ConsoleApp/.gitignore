@@ -1,0 +1,10 @@
+# Ignorar arquivos do Excel
+*.xlsx
+
+# Ignorar pastas de build e binários do .NET
+bin/
+obj/
+
+# Ignorar pastas de log e configurações do editor
+Logs/
+.vscode/
