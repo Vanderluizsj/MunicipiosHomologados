@@ -12,9 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="C:\Source\MunicipiosHomologados\Base_Consulta_IBGE_Municipios_2024.xlsx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <EmbeddedResource Include="C:\Source\MunicipiosHomologados\Base_Consulta_IBGE_Municipios_2024.xlsx" />
+
     <None Include="C:\Source\MunicipiosHomologados\Cliente.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
