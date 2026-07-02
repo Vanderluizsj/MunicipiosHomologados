@@ -234,6 +234,7 @@ ResultadoValidacao.cs
 <NUGET>/
  epplus.interfaces/8.4.0/lib/net10.0/EPPlus.Interfaces.dll
  epplus/8.6.1/lib/net10.0/EPPlus.dll
+ htmlagilitypack/1.12.4/lib/net7.0/HtmlAgilityPack.dll
  microsoft.extensions.configuration.abstractions/10.0.7/lib/net10.0/Microsoft.Extensions.Configuration.Abstractions.dll
  microsoft.extensions.configuration.fileextensions/10.0.7/lib/net10.0/Microsoft.Extensions.Configuration.FileExtensions.dll
  microsoft.extensions.configuration.json/10.0.7/lib/net10.0/Microsoft.Extensions.Configuration.Json.dll

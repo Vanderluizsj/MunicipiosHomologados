@@ -1,8 +1,9 @@
 ﻿using System.Drawing;
 using System.Reflection; // Necessário para ler o recurso embutido
 using System.Text.RegularExpressions;
-using OfficeOpenXml; 
+using OfficeOpenXml;
 using OfficeOpenXml.Style;
+using HtmlAgilityPack;
 
 namespace ValidadorEscalavelNDD
 {
@@ -35,7 +36,7 @@ namespace ValidadorEscalavelNDD
 
                 // 3. PROCESSA A PLANILHA DE CLIENTES
                 Console.WriteLine("📝 Processando e higienizando dados dos clientes...");
-                
+
                 if (!File.Exists(caminhoClientes))
                 {
                     throw new FileNotFoundException($"O arquivo 'Cliente.xlsx' não foi encontrado na pasta atual.");
@@ -108,12 +109,12 @@ namespace ValidadorEscalavelNDD
                         rangeHeader.Style.Font.Bold = true;
                         rangeHeader.Style.Font.Color.SetColor(Color.White);
                         rangeHeader.Style.Fill.PatternType = ExcelFillStyle.Solid;
-                        rangeHeader.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(31, 78, 120)); 
+                        rangeHeader.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(31, 78, 120));
                         rangeHeader.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
                         rangeHeader.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
                     }
 
-                    Color corZebradaSuave = Color.FromArgb(249, 251, 253); 
+                    Color corZebradaSuave = Color.FromArgb(249, 251, 253);
                     Color corBordaCinza = Color.FromArgb(217, 217, 217);
 
                     for (int r = 2; r <= totalLinhas; r++)
@@ -122,11 +123,11 @@ namespace ValidadorEscalavelNDD
                         linhaDados.Style.Font.Name = "Arial";
                         linhaDados.Style.Font.Size = 10;
 
-                        ws.Cells[r, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;   
-                        ws.Cells[r, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center; 
-                        ws.Cells[r, 3].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center; 
-                        ws.Cells[r, 4].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;   
-                        ws.Cells[r, 5].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center; 
+                        ws.Cells[r, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                        ws.Cells[r, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                        ws.Cells[r, 3].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                        ws.Cells[r, 4].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                        ws.Cells[r, 5].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
                         if (r % 2 == 0)
                         {
@@ -165,27 +166,40 @@ namespace ValidadorEscalavelNDD
         {
             _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) C# Core");
-            
+
             string html = await _httpClient.GetStringAsync(url);
             if (!html.Contains("Municípios Homologados", StringComparison.OrdinalIgnoreCase))
                 throw new Exception("A página da NDD não retornou o conteúdo esperado.");
 
+
             var mapaMunicipios = new Dictionary<string, bool>();
-            var regexLinhas = new Regex(@"([^\n\r]{1,60})\b([0-9]{7})\b([^\n\r]{1,60})", RegexOptions.IgnoreCase);
-            var matches = regexLinhas.Matches(html);
 
-            foreach (Match match in matches)
+            var doc = new HtmlDocument();
+            doc.LoadHtml(html);
+
+            var linhas = doc.DocumentNode.SelectNodes("//table/tbody/tr");
+
+            if (linhas == null)
+                throw new Exception("Nenhuma linha da tabela foi encontrada na página.");
+
+            foreach (var linha in linhas)
             {
-                string textoAoRedor = match.Value;
-                string codigoIbge = match.Groups[2].Value;
+                var colunas = linha.SelectNodes("td");
+                Console.WriteLine($"Município: {colunas[0].InnerText.Trim()}");
+                Console.WriteLine($"UF: {colunas[1].InnerText.Trim()}");
+                Console.WriteLine($"IBGE: {colunas[2].InnerText.Trim()}");
+                Console.WriteLine($"Padrão: {colunas[3].InnerText.Trim()}");
+                if (colunas == null || colunas.Count < 4)
+                    continue;
 
-                bool ehNacional = textoAoRedor.Contains("Nacional", StringComparison.OrdinalIgnoreCase) || 
-                                  textoAoRedor.Contains("NfseNacional", StringComparison.OrdinalIgnoreCase);
+                string codigoIbge = HtmlEntity.DeEntitize(colunas[2].InnerText).Trim();
+                string padrao = HtmlEntity.DeEntitize(colunas[3].InnerText).Trim();
 
-                if (!mapaMunicipios.ContainsKey(codigoIbge))
-                    mapaMunicipios.Add(codigoIbge, ehNacional);
-                else if (ehNacional)
-                    mapaMunicipios[codigoIbge] = true;
+                bool ehNacional = padrao.Equals(
+                    "NFSeNacional",
+                    StringComparison.OrdinalIgnoreCase);
+
+                mapaMunicipios[codigoIbge] = ehNacional;
             }
 
             return mapaMunicipios;
@@ -196,7 +210,7 @@ namespace ValidadorEscalavelNDD
         {
             var dicionario = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             var assembly = Assembly.GetExecutingAssembly();
-            
+
             // Procura o recurso da planilha embutida de forma dinâmica
             string nomeRecurso = "";
             foreach (var name in assembly.GetManifestResourceNames())
@@ -219,13 +233,13 @@ namespace ValidadorEscalavelNDD
 
                 using (var pacote = new ExcelPackage(stream))
                 {
-                    var ws = pacote.Workbook.Worksheets[0]; 
+                    var ws = pacote.Workbook.Worksheets[0];
                     int totalLinhas = ws.Dimension?.End.Row ?? 0;
 
                     for (int linha = 2; linha <= totalLinhas; linha++)
                     {
-                        string chaveOriginal = ws.Cells[linha, 1].Value?.ToString()?.Trim() ?? ""; 
-                        string codigo = ws.Cells[linha, 2].Value?.ToString()?.Trim() ?? "";        
+                        string chaveOriginal = ws.Cells[linha, 1].Value?.ToString()?.Trim() ?? "";
+                        string codigo = ws.Cells[linha, 2].Value?.ToString()?.Trim() ?? "";
 
                         if (!string.IsNullOrEmpty(chaveOriginal) && !string.IsNullOrEmpty(codigo))
                         {
