@@ -1,7 +1,9 @@
 using System.Drawing;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
-using MunicipiosHomologados.ConsoleApp.Util; // Caso queira usar seu Logger personalizado futuramente
+using MunicipiosHomologados.ConsoleApp.Util;
+using MunicipiosHomologados.ConsoleApp.Configuration;
+using Microsoft.Extensions.Configuration; // Caso queira usar seu Logger personalizado futuramente
 
 namespace MunicipiosHomologados.ConsoleApp.Services
 {
@@ -11,21 +13,26 @@ namespace MunicipiosHomologados.ConsoleApp.Services
         {
             Logger.Info("📝 Processando e higienizando dados dos clientes...");
 
+            
+        var settings = new AppSettings();
+
+        AppConfig.Configuration.Bind(settings);
+
             // Caminhos baseados na execução do usuário (pasta atual do .exe)
             string pastaExecutavel = AppDomain.CurrentDomain.BaseDirectory;
-            string caminhoClientes = Path.Combine(pastaExecutavel, "Cliente.xlsx");
-            string caminhoResultado = Path.Combine(pastaExecutavel, "Cliente_Resultado_Final.xlsx");
+            string caminhoClientes = Path.Combine(pastaExecutavel, settings.Arquivos.PlanilhaCliente);
+            string caminhoResultado = Path.Combine(pastaExecutavel, settings.Arquivos.PlanilhaResultado);
 
             if (!File.Exists(caminhoClientes))
             {
-                throw new FileNotFoundException($"O arquivo obrigatório 'Cliente.xlsx' não foi encontrado na pasta atual.");
+                throw new FileNotFoundException($"O arquivo obrigatório '{settings.Arquivos.PlanilhaCliente}' não foi encontrado na pasta atual.");
             }            
 
             using (var pacote = new ExcelPackage(new FileInfo(caminhoClientes)))
             {
                 if (pacote.Workbook.Worksheets.Count == 0)
                 {
-                    throw new Exception("Nenhuma aba legível encontrada em 'Cliente.xlsx'.");
+                    throw new Exception($"Nenhuma aba legível encontrada em '{settings.Arquivos.PlanilhaCliente}'.");
                 }
 
                 var ws = pacote.Workbook.Worksheets[0];

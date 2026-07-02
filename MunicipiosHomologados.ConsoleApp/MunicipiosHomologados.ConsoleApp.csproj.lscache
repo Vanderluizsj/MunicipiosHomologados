@@ -54,6 +54,9 @@ TemporaryDependencyNodeTargetIdentifier=net10.0
 /warnaserror+:NU1605,SYSLIB0011
 
 [sourceFiles]
+Configuration/
+ AppConfig.cs
+ AppSettings.cs
 obj/Debug/net10.0/
  .NETCoreApp,Version=v10.0.AssemblyAttributes.cs
  MunicipiosHomologados.ConsoleApp.AssemblyInfo.cs
@@ -238,14 +241,15 @@ Util/Logger.cs
  epplus.interfaces/8.4.0/lib/net10.0/EPPlus.Interfaces.dll
  epplus/8.6.1/lib/net10.0/EPPlus.dll
  htmlagilitypack/1.12.4/lib/net7.0/HtmlAgilityPack.dll
- microsoft.extensions.configuration.abstractions/10.0.7/lib/net10.0/Microsoft.Extensions.Configuration.Abstractions.dll
- microsoft.extensions.configuration.fileextensions/10.0.7/lib/net10.0/Microsoft.Extensions.Configuration.FileExtensions.dll
- microsoft.extensions.configuration.json/10.0.7/lib/net10.0/Microsoft.Extensions.Configuration.Json.dll
- microsoft.extensions.configuration/10.0.7/lib/net10.0/Microsoft.Extensions.Configuration.dll
- microsoft.extensions.fileproviders.abstractions/10.0.7/lib/net10.0/Microsoft.Extensions.FileProviders.Abstractions.dll
- microsoft.extensions.fileproviders.physical/10.0.7/lib/net10.0/Microsoft.Extensions.FileProviders.Physical.dll
- microsoft.extensions.filesystemglobbing/10.0.7/lib/net10.0/Microsoft.Extensions.FileSystemGlobbing.dll
- microsoft.extensions.primitives/10.0.7/lib/net10.0/Microsoft.Extensions.Primitives.dll
+ microsoft.extensions.configuration.abstractions/10.0.9/lib/net10.0/Microsoft.Extensions.Configuration.Abstractions.dll
+ microsoft.extensions.configuration.binder/10.0.9/lib/net10.0/Microsoft.Extensions.Configuration.Binder.dll
+ microsoft.extensions.configuration.fileextensions/10.0.9/lib/net10.0/Microsoft.Extensions.Configuration.FileExtensions.dll
+ microsoft.extensions.configuration.json/10.0.9/lib/net10.0/Microsoft.Extensions.Configuration.Json.dll
+ microsoft.extensions.configuration/10.0.9/lib/net10.0/Microsoft.Extensions.Configuration.dll
+ microsoft.extensions.fileproviders.abstractions/10.0.9/lib/net10.0/Microsoft.Extensions.FileProviders.Abstractions.dll
+ microsoft.extensions.fileproviders.physical/10.0.9/lib/net10.0/Microsoft.Extensions.FileProviders.Physical.dll
+ microsoft.extensions.filesystemglobbing/10.0.9/lib/net10.0/Microsoft.Extensions.FileSystemGlobbing.dll
+ microsoft.extensions.primitives/10.0.9/lib/net10.0/Microsoft.Extensions.Primitives.dll
  microsoft.io.recyclablememorystream/3.0.1/lib/net6.0/Microsoft.IO.RecyclableMemoryStream.dll
  system.security.cryptography.pkcs/10.0.7/lib/net10.0/System.Security.Cryptography.Pkcs.dll
  system.security.cryptography.xml/10.0.7/lib/net10.0/System.Security.Cryptography.Xml.dll
@@ -261,6 +265,9 @@ Util/Logger.cs
 <DOTNET>/sdk/10.0.108/Sdks/Microsoft.NET.Sdk/analyzers/
  Microsoft.CodeAnalysis.CSharp.NetAnalyzers.dll
  Microsoft.CodeAnalysis.NetAnalyzers.dll
+<NUGET>/microsoft.net.illink.tasks/10.0.8/analyzers/dotnet/cs/
+ ILLink.CodeFixProvider.dll
+ ILLink.RoslynAnalyzer.dll
 
 [analyzerConfigFiles]
 <DOTNET>/sdk/10.0.108/Sdks/Microsoft.NET.Sdk/analyzers/build/config/analysislevel_10_default.globalconfig

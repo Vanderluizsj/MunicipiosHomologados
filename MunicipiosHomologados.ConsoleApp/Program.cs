@@ -31,6 +31,7 @@ namespace MunicipiosHomologados.ConsoleApp
             catch (Exception ex)
             {
                 Logger.Info($"\n❌ Erro crítico na execução da orquestração principal: {ex.Message}");
+                Logger.FatalErro(ex.ToString());
             }
         }
     }

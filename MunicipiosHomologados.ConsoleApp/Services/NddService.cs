@@ -1,16 +1,22 @@
 using HtmlAgilityPack;
+using Microsoft.Extensions.Configuration;
+using MunicipiosHomologados.ConsoleApp.Configuration;
 using MunicipiosHomologados.ConsoleApp.Util;
 
 namespace MunicipiosHomologados.ConsoleApp.Services
 {
     public class NddService
     {
-        private const string UrlNdd = "https://documentacao-nfse.e-datacenter.nddigital.com.br/fiscal-documentacao/docs/ndd-nfse/municipios-nfse/";
+        //private const string UrlNdd = "https://documentacao-nfse.e-datacenter.nddigital.com.br/fiscal-documentacao/docs/ndd-nfse/municipios-nfse/";
         private static readonly HttpClient _httpClient = new HttpClient();
         public async Task<Dictionary<string, bool>> ObterMunicipiosHomologadosAsync()
         {
+            var settings = new AppSettings();
+
+AppConfig.Configuration.Bind(settings);
+
             Logger.Info("🌐 Consultando site da NDD...");
-            var resultado = await ObterMunicipiosHomologadosNddAsync(UrlNdd);
+            var resultado = await ObterMunicipiosHomologadosNddAsync(settings.Ndd.Url);
             Logger.Sucesso($"Mapeamento da NDD concluído! {resultado.Count} municípios carregados.");
             return resultado;
         }

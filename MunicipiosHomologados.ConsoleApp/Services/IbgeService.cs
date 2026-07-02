@@ -6,6 +6,7 @@ namespace MunicipiosHomologados.ConsoleApp.Services;
 
 public class IbgeService
 {
+    private const string NomeBaseIbge = "Base_Consulta_IBGE_Municipios_2024.xlsx";
     public Dictionary<string, string> CarregarMunicipios()
     {
         Logger.Info("📂 Carregando base de dados interna do IBGE...");
@@ -13,7 +14,7 @@ public class IbgeService
         return CarregarDicionarioIbgeEmbutido();
     }
 
-    private Dictionary<string, string> CarregarDicionarioIbgeEmbutido()
+    private Dictionary<string, string> CarregarDicionarioIbgeEmbutido()    
     {
         var dicionario = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
@@ -23,7 +24,7 @@ public class IbgeService
 
         foreach (var name in assembly.GetManifestResourceNames())
         {
-            if (name.Contains("Base_Consulta_IBGE_Municipios_2024.xlsx"))
+            if (name.Contains(NomeBaseIbge))
             {
                 nomeRecurso = name;
                 break;

@@ -25,6 +25,10 @@ namespace MunicipiosHomologados.ConsoleApp.Util
         {
             Logar(mensagem, ConsoleColor.Red, "ERRO");
         }
+        public static void FatalErro(string mensagem)
+        {
+            Logar(mensagem, ConsoleColor.Red, "ERRO");
+        }
 
         private static void Logar(string mensagem, ConsoleColor cor, string nivel)
         {
