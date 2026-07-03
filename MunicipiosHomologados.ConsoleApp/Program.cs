@@ -9,7 +9,7 @@ namespace MunicipiosHomologados.ConsoleApp
         static async Task Main(string[] args)
         {
             // Configuração da Licença (Garante que se aplique no escopo do serviço também)
-            ExcelPackage.License.SetNonCommercialPersonal("<Vander>");
+            ExcelPackage.License.SetNonCommercialPersonal("<Luiz>");
             try
             {
                 Logger.Info("🚀 Iniciando processamento de alta performance estruturado...");

@@ -1,5 +1,49 @@
-*.xlsx/
+# ==========================================
+# 📂 Arquivos de Dados e Planilhas (LGPD / Performance)
+# ==========================================
+# Ignora todas as planilhas Excel para evitar subir dados sensíveis ou arquivos pesados
+*.xlsx
+*.xlsm
+*.xltx
+*.xltm
+
+# ABRE EXCEÇÃO: Permite rastrear apenas os arquivos de exemplo vazios
+!Cliente.xlsx
+!Base_Consulta_IBGE_Municipios_2024.xlsx
+
+# Ignora explicitamente a pasta de logs gerada localmente
+Logs/
+*.log
+
+# ==========================================
+# ⚙ Arquivos de Configuração Local
+# ==========================================
+# Se o seu appsettings tiver senhas ou caminhos locais, você pode ignorá-lo
+# e deixar apenas um "appsettings.Development.json" ou "appsettings.json.example"
+# appsettings.json
+
+# ==========================================
+# 🚀 Binários e Compilação .NET
+# ==========================================
 bin/
 obj/
-Logs/
+
+# Arquivos de publicação do .NET
+publish/
+
+# ==========================================
+# 🛠 Ferramentas e IDEs (VS Code / Visual Studio)
+# ==========================================
 .vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# ==========================================
+# 🐛 Arquivos do Sistema Operacional
+# ==========================================
+Thumbs.db
+ehthumbs.db
+Desktop.ini
