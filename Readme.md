@@ -1,4 +1,4 @@
-# 🚀 Validador de Municípios Homologados NDD (Alta Performance)
+# 🚀 Validador de Municípios Homologados NDD
 
 ![.NET](https://img.shields.io/badge/.NET-10.0-purple)
 ![C#](https://img.shields.io/badge/C%23-12.0-blue)
