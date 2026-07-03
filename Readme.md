@@ -25,9 +25,7 @@
 ---
 ---
 
-## 💡 O Problema vs. A Solução
-
-### Abordagem:
+## Abordagem:
 * **Web Scraping Otimizado:** Uso de requisições HTTP puras e assíncronas com `HttpClient`, combinadas com a análise estruturada da árvore HTML via `HtmlAgilityPack`.
 * **Processamento In-Memory:** Carregamento da base do IBGE e dados da NDD em dicionários hash (`Dictionary<string, T>`), reduzindo o tempo de cruzamento de dados para escopo de milissegundos.
 * **Manipulação Limpa de Arquivos:** Uso do **EPPlus** para leitura e escrita direta nos arquivos Excel, permitindo inclusive a formatação visual e design zebrado automático sem necessidade de interagir com o ecossistema do MS Office.
