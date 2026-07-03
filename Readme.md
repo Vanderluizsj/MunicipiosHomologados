@@ -56,6 +56,8 @@ MunicipiosHomologados/
     ├── Util/                       # Utilitários globais (Logger customizado)
     └── appsettings.json            # Parametrização externa das URLs e arquivos
 
+
+```
 ---
 
 ### 👨‍💻 Autor
