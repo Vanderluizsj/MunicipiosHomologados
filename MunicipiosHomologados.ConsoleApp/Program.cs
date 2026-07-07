@@ -12,21 +12,28 @@ namespace MunicipiosHomologados.ConsoleApp
             ExcelPackage.License.SetNonCommercialPersonal("<Luiz>");
             try
             {
-                Logger.Info("🚀 Iniciando processamento de alta performance estruturado...");
+                Logger.Info("Iniciando processamento de alta performance estruturado...");
 
-                // 1. CARREGA O SITE DA NDD EM SEGUNDO PLANO
                 var nddService = new NddService();
-                var municipiosHomologadosNdd = await nddService.ObterMunicipiosHomologadosAsync();
+                var ibgeService = new IbgeService();
+                var excelService = new ExcelService();
 
-                // 2. CARREGA A BASE DO IBGE EMBUTIDA DENTRO DO EXE (PROCV EM MEMÓRIA)
-                var ibgeService = new IbgeService(); // Certifique-se de que o método dele retorne Dictionary<string, string>
+                // 1. NDD SERVICE: Baixa todos os dados da web para a memória
+                var dadosNdd = await nddService.ObterMunicipiosHomologadosAsync();
+
+                // [NOVO] 1.5. EXCEL SERVICE: Exporta a cópia idêntica do site para um arquivo Excel local de backup
+                string caminhoBackupNdd = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Base_Atualizada_NDD.xlsx");
+                excelService.GerarPlanilhaBaseNdd(dadosNdd, caminhoBackupNdd);
+                Logger.Sucesso($"Planilha de backup da NDD criada em: {caminhoBackupNdd}");
+
+                // 2. IBGE SERVICE: Carrega o dicionário com os códigos do IBGE
                 var dicionarioIbge = ibgeService.CarregarMunicipios();
 
-                // 3. PROCESSA, FORMATA E EXPORTA A PLANILHA FINAL
-                var excelService = new ExcelService();
-                excelService.ProcessarPlanilhaClientes(dicionarioIbge, municipiosHomologadosNdd);
-                
-                Logger.Info("\n🎉 Processamento concluído com sucesso total!");
+                // 3. EXCEL SERVICE: Processa o Procv e gera o resultado do cliente
+                // (Ajustado para passar a lista 'dadosNdd' para dentro do processamento)
+                excelService.ProcessarPlanilhaClientes(dicionarioIbge, dadosNdd);
+
+                Logger.Sucesso("Processamento concluído com sucesso total!");
             }
             catch (Exception ex)
             {
