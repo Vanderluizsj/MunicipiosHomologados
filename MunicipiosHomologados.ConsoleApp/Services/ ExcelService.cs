@@ -46,9 +46,10 @@ namespace MunicipiosHomologados.ConsoleApp.Services
                 worksheet.Cells[1, 3].Value = "Código IBGE";
                 worksheet.Cells[1, 4].Value = "Homologado NDD";
                 worksheet.Cells[1, 5].Value = "Nacional";
+                worksheet.Cells[1, 6].Value = "Padrão";
 
-                // Estilização do cabeçalho completo (Colunas A até E)
-                using (var range = worksheet.Cells[1, 1, 1, 5])
+                // Estilização do cabeçalho completo (Colunas A até F)
+                using (var range = worksheet.Cells[1, 1, 1, 6])
                 {
                     range.Style.Font.Bold = true;
                     range.Style.Font.Name = "Arial";
@@ -80,23 +81,25 @@ namespace MunicipiosHomologados.ConsoleApp.Services
                         if (homologado != null)
                         {
                             worksheet.Cells[linha, 4].Value = "SIM";
+                            worksheet.Cells[linha, 6].Value = homologado.Padrao;
 
                             // Verifica se o padrão retornado é o nacional para preencher a nova coluna
                             bool ehNacional = homologado.Padrao.Equals("NFSeNacional", StringComparison.OrdinalIgnoreCase);
                             worksheet.Cells[linha, 5].Value = ehNacional ? "SIM" : "NÃO";
 
                             // Pinta a linha de Verde Claro se estiver homologado
-                            worksheet.Cells[linha, 1, linha, 5].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                            worksheet.Cells[linha, 1, linha, 5].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(220, 245, 220));
+                            worksheet.Cells[linha, 1, linha, 6].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                            worksheet.Cells[linha, 1, linha, 6].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(220, 245, 220));
                         }
                         else
                         {
                             worksheet.Cells[linha, 4].Value = "NÃO";
                             worksheet.Cells[linha, 5].Value = "NÃO";
+                            worksheet.Cells[linha, 6].Value = "N/A";
 
                             // Pinta de Vermelho bem claro se não estiver homologado
-                            worksheet.Cells[linha, 1, linha, 5].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                            worksheet.Cells[linha, 1, linha, 5].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(255, 225, 225));
+                            worksheet.Cells[linha, 1, linha, 6].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                            worksheet.Cells[linha, 1, linha, 6].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(255, 225, 225));
                         }
                     }
                     else

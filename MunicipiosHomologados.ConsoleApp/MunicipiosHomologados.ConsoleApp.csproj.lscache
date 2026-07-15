@@ -57,6 +57,9 @@ TemporaryDependencyNodeTargetIdentifier=net10.0
 Configuration/
  AppConfig.cs
  AppSettings.cs
+Models/
+ MunicipioIbge.cs
+ MunicipioNdd.cs
 obj/Debug/net10.0/
  .NETCoreApp,Version=v10.0.AssemblyAttributes.cs
  MunicipiosHomologados.ConsoleApp.AssemblyInfo.cs
