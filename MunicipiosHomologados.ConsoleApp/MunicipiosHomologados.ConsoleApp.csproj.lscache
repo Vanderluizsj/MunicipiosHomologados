@@ -69,7 +69,9 @@ Services/
   ExcelService.cs
  IbgeService.cs
  NddService.cs
-Util/Logger.cs
+Util/
+ Logger.cs
+ TextoHelper.cs
 
 [metadataReferences]
 <DOTNET>/packs/Microsoft.NETCore.App.Ref/10.0.8/ref/net10.0/

@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
+
 using System.Drawing;
-using System.Linq;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using MunicipiosHomologados.ConsoleApp.Models;
@@ -61,10 +58,15 @@ namespace MunicipiosHomologados.ConsoleApp.Services
 
                 for (int linha = 2; linha <= totalLinhas; linha++)
                 {
+
+                    /*
                     string municipioCliente = worksheet.Cells[linha, 1].Value?.ToString()?.ToUpper().Trim() ?? "";
                     string ufCliente = worksheet.Cells[linha, 2].Value?.ToString()?.ToUpper().Trim() ?? "";
 
                     // Chave combinada idêntica à do IBGE (Ex: "SÃO PAULO - SP")
+                    string chaveBusca = $"{municipioCliente} - {ufCliente}";*/
+                    string municipioCliente = TextoHelper.Normalizar(worksheet.Cells[linha, 1].Value?.ToString());
+                    string ufCliente = TextoHelper.Normalizar(worksheet.Cells[linha, 2].Value?.ToString());
                     string chaveBusca = $"{municipioCliente} - {ufCliente}";
 
                     // 1. Busca o Código IBGE em memória
